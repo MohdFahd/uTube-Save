@@ -2,17 +2,36 @@
 import { ref } from "vue";
 import axios from "axios";
 
-const link = ref();
-axios
-  .get("/getData", link)
-  .then((response) => {
-    // Handle successful response
-    console.log(response.data);
-  })
-  .catch((error) => {
-    // Handle error
-    console.error("Error:", error);
-  });
+const link = ref("");
+const errorMessage = ref(""); // Variable to store error message
+
+const submitForm = () => {
+  // Reset error message
+  errorMessage.value = "";
+
+  // Send request to server
+  axios
+    .post("http://localhost:3000/getData", { link: link.value })
+    .then((response) => {
+      // Handle successful response
+      console.log(response.data);
+      errorMessage.value = response.data.message; // Display message from the server
+    })
+    .catch((error) => {
+      // Handle error
+      console.error("Error:", error);
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        // Set error message received from server
+        errorMessage.value = error.response.data.message;
+      } else {
+        errorMessage.value = "An unexpected error occurred.";
+      }
+    });
+};
 </script>
 <template>
   <section class="hero">
@@ -100,11 +119,7 @@ axios
           </div>
         </div>
         <div class="frm_dl dl_cm_st">
-          <form
-            method="post"
-            @submit.prevent="submitForm"
-            onsubmit="return download();"
-          >
+          <form method="post" @submit.prevent="submitForm">
             <div class="input-group">
               <span class="input-group-text"
                 ><svg
@@ -201,11 +216,11 @@ axios
           </div>
 
           <div
-            v-show="message"
+            v-show="errorMessage"
             class="sup_plt border-top border-1"
             style="background-color: red"
           >
-            <p class="text-center"></p>
+            <p class="text-center">{{ errorMessage }}</p>
           </div>
         </div>
       </div>

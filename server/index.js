@@ -1,12 +1,26 @@
 const express = require("express");
-const cors = require("cors"); // Import cors
+const cors = require("cors");
+const ytdl = require("ytdl-core");
+
 const app = express();
 
+app.use(express.json()); // Parse JSON request bodies
 app.use(cors()); // Enable CORS for all routes
 
 app.get("/", (req, res) => {
-  //   return res.status(200).send("Hello Mohammed");
-  return res.status(200).json({ data: "Hello mohammed" });
+  res.status(200).json({ data: "Hello Mohammed" });
+});
+
+app.post("/getData", (req, res) => {
+  const link = req.body.link;
+  let videoLink = req.body.link;
+  let isValidate = ytdl.validateURL(videoLink);
+  if (isValidate) {
+    res.json({ message: "correct video URL" });
+    console.log("yes isValidate");
+  } else {
+    res.json({ message: "Error: Invalid video URL" });
+  }
 });
 
 app.listen(3000, () => {
