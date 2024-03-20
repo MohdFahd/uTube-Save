@@ -5,9 +5,8 @@ const link = ref("");
 const formaVid = ref("");
 const errorMessage = ref(""); // Variable to store error message
 const Formats = ref("");
-const downloadProgress = ref(null); // Variable to store download progress
-
 const progress = ref(0); // Variable
+const downloadUrl = ref(""); // Define downloadUrl outside initSSE
 
 const submitForm = () => {
   // Reset error message
@@ -22,7 +21,7 @@ const submitForm = () => {
     })
     .then((response) => {
       // Handle successful response
-      console.log(response.data);
+      // console.log(response.data);
       errorMessage.value = response.data.message; // Display message from the server
       Formats.value = response.data.formats; // Display message from the server
     })
@@ -47,10 +46,14 @@ const initSSE = () => {
   const eventSource = new EventSource("http://localhost:3000/progress");
   eventSource.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    progress.value = data.progress; // Update download progress
+    progress.value = Math.round(data.progress); // Update download progress
+    if (progress.value === 100) {
+      downloadUrl.value = `http://localhost:3000/download?format=${
+        formaVid.value
+      }&link=${encodeURIComponent(link.value)}`;
+    }
   };
 };
-
 // Initialize SSE connection when the component is mounted
 onMounted(() => {
   initSSE();
@@ -136,29 +139,6 @@ onMounted(() => {
             </button>
           </div>
         </form>
-        <button
-          type="button"
-          @click="download"
-          class="btn_dl d-none d-md-block"
-        >
-          <span>Download <i class="fa-solid fa-arrow-right"></i></span>
-          <span
-            class="d-none spinner-border spinner-border-sm"
-            aria-hidden="true"
-          ></span>
-        </button>
-        <!-- Download progress bar -->
-        <progress id="downloadProgress" :value="progress" max="100"></progress>
-        <span id="progressText">{{ progress }}% the </span>
-        <button id="cancelButton" @click="cancelDownload" style="display: none">
-          Cancel
-        </button>
-
-        <div
-          class="dl_list hidden rounded"
-          id="download_list"
-          style="width: 100%"
-        ></div>
 
         <div class="sup_plt border-top border-1" v-if="Formats">
           <p>Available Formats:</p>
@@ -179,7 +159,8 @@ onMounted(() => {
             </div>
           </ul>
         </div>
-
+        <!-- <progress id="downloadProgress" :value="progress" max="100"></progress>
+        <span id="progressText">{{ progress }}% </span> -->
         <div
           v-show="errorMessage"
           class="sup_plt border-top border-1"
