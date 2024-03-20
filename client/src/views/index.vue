@@ -3,6 +3,8 @@ import homeView from "./partials/homeView.vue";
 import heroInfo from "./partials/heroInfo.vue";
 import Message from "../components/Message.vue";
 import loadingBar from "../components/loadingBar.vue";
+import selectOption from "../components/selectOption.vue";
+
 // import availableFormats from "../components/availableFormats.vue";
 
 import { ref, onMounted } from "vue";
@@ -13,16 +15,19 @@ const errorMessage = ref(""); // Variable to store error message
 const Formats = ref("");
 const progress = ref(0); // Variable
 const downloadUrl = ref(""); // Define downloadUrl outside initSSE
-
+const vidInfo = ref(""); // Define vidInfo
 const loading = ref(false); // Define loading
-function handleFormatSelected(selectedFormat) {
-  formaVid.value = selectedFormat;
-}
+// Define a method to handle the emitted event
+const handleOptionSelected = (value) => {
+  console.log(value);
+  formaVid.value = value;
+};
 const submitForm = () => {
   // Reset error message
   errorMessage.value = "";
   Formats.value = "";
   loading.value = true;
+  vidInfo.value = "";
   // Send request to server
   axios
     .post("http://localhost:3000/getData", {
@@ -35,6 +40,7 @@ const submitForm = () => {
       errorMessage.value = response.data.message; // Display message from the server
       Formats.value = response.data.formats; // Display message from the server
       loading.value = false;
+      vidInfo.value = response.data.videoDetails; // Display message from the server
     })
 
     .catch((error) => {
@@ -149,26 +155,20 @@ onMounted(() => {
       </div>
     </form>
 
-    <div class="sup_plt border-top border-1" v-if="Formats">
-      <p>Available Formats:</p>
-      <ul>
-        <div class="wrapper" v-for="Format in Formats" :key="Format">
-          <div class="option">
-            <input
-              class="input"
-              v-model="formaVid"
-              type="radio"
-              name="btn"
-              :value="Format.qualityLabel"
-            />
-            <div class="btn">
-              <span class="span">{{ Format.qualityLabel }}</span>
-              <span class="span">{{ Format.contentLength }}</span>
-            </div>
-          </div>
-        </div>
-      </ul>
+    <div class="sup_plt border-top border-1 flex bg-danger" v-if="Formats">
+      <div class="flex justify-content-center items-center mx-auto">
+        <img src="/assets/img/ps.png" width="150px" height="100px" alt="" />
+      </div>
+      <div class="card-body text-end me-4">
+        <h5 class="card-title">{{ vidInfo.title }}</h5>
+        <p class="card-text">{{ vidInfo.lengthSeconds }}</p>
+        <selectOption
+          :formats="Formats"
+          @option-selected="handleOptionSelected"
+        />
+      </div>
     </div>
+
     <div class="sup_plt border-top border-1" v-if="progress > 0">
       <div class="progress" style="width: 100%">
         <div

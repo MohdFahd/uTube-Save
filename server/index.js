@@ -16,7 +16,7 @@ app.use(cors()); // Enable CORS for all routes
 var formats;
 var videoLink;
 let downloadProgress = 0;
-
+var title;
 app.get("/", (req, res) => {
   res.status(200).json({ data: "Hello Mohammed" });
 });
@@ -46,7 +46,16 @@ app.post("/getData", async (req, res) => {
         contentLength: format.contentLength,
       };
     });
-    res.json({ formats: formatDetails });
+    // Extract the vidInfo
+    title = player_response.videoDetails.title;
+    const lengthSeconds = player_response.videoDetails.lengthSeconds;
+    res.json({
+      formats: formatDetails,
+      videoDetails: {
+        title: title,
+        lengthSeconds: lengthSeconds,
+      },
+    });
     console.log("formats");
   } else {
     res.json({ message: "Error: Invalid video URL" });
@@ -74,7 +83,12 @@ app.get("/download", async (req, res) => {
     `bytes 0-${format.contentLength - 1}/${format.contentLength}`
   );
   res.setHeader("Accept-Ranges", "bytes");
-  res.setHeader("Content-Disposition", `attachment; filename="video.mp4"`);
+  const encodedTitle = encodeURIComponent(title);
+
+  res.setHeader(
+    "Content-Disposition",
+    `attachment; filename="${encodedTitle}.mp4"`
+  );
 
   // Calculate chunk size for tracking progress
   const chunkSize = 10 * 1024; // 10 KB
