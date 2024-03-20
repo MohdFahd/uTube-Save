@@ -161,9 +161,29 @@ onMounted(() => {
         </div>
       </ul>
     </div>
+    <div class="sup_plt border-top border-1" v-if="progress > 0">
+      <div class="progress" style="width: 100%">
+        <div
+          class="progress-bar bg-primary"
+          role="progressbar"
+          :style="{ width: progress + '%' }"
+          :aria-valuenow="progress"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          {{ progress }}%
+        </div>
+      </div>
+      <div v-if="progress === 100" class="d-flex">
+        <a :href="downloadUrl" class="btn btn-primary" target="_blank"
+          >Download</a
+        >
+      </div>
+    </div>
     <Message :msg="errorMessage" v-show="errorMessage" />
-    <progress id="downloadProgress" :value="progress" max="100"></progress>
-    <span id="progressText">{{ progress }}% </span>
+
+    <!-- <progress id="downloadProgress" :value="progress" max="100"></progress>
+    <span id="progressText">{{ progress }}% </span> -->
   </homeView>
   <!--  -->
   <heroInfo />

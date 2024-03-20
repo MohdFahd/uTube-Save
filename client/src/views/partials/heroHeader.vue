@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <div class="col">
+    <!-- <div class="col">
       <img
         loading="lazy"
         src="/assets/youtube-save-logo.png"
@@ -9,14 +9,14 @@
         height="52"
         class="img-fluid"
       />
-    </div>
-    <div class="col">
+    </div> -->
+    <div class="col d-flex justify-content-center">
       <img
         loading="lazy"
         src="/assets/img/ps.png"
         alt="Video Max"
-        width="20%"
-        class="img-fluid"
+        width="15%"
+        class="img-fluid mx-auto"
       />
     </div>
   </div>
