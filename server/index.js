@@ -42,14 +42,13 @@ app.post("/getData", async (req, res) => {
       const { player_response } = await ytdl.getInfo(videoID);
       formats = player_response.streamingData["formats"];
       // map the formats to only qualityLabel and quality
-      const formatDetails = formats
-        .filter((format) => format.qualityLabel === "360p")
-        .map((format) => {
-          return {
-            qualityLabel: format.qualityLabel,
-            contentLength: format.contentLength,
-          };
-        });
+      const formatDetails = formats.map((format) => {
+        return {
+          qualityLabel: format.qualityLabel,
+          contentLength: format.contentLength,
+        };
+      });
+      // .filter((format) => format.qualityLabel === "360p")
 
       // Extract the vidInfo and send the data into the client
       title = player_response.videoDetails.title;
@@ -85,10 +84,10 @@ const sendProgress = (progress) => {
 
 app.get("/download", async (req, res) => {
   // Get the selected format from the request query parameters
-  selectedFormat = formats.find((format) => {
-    return format.qualityLabel === choiceFormat;
-  });
-  const format = selectedFormat; // Assuming you want to download the first format in the list
+  // selectedFormat = formats.find((format) => {
+  //   return format.qualityLabel === choiceFormat;
+  // });
+  const format = formats[0]; // download the first format in the list
 
   const videoStream = ytdl(videoLink, { format: selectedFormat });
 

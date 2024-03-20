@@ -81,23 +81,19 @@ Here examples of uses:
 3.  Choose the resolution if it a video you want to download.
 
 <div style="text-align: center;">
-    <img src="pyutube/images/image1.png" />
+    <img src="imgs/main.png" />
     <br />
     <br />
-    <img src="pyutube/images/image2.png" />
+    <img src="imgs/2.png" />
     <br />
     <br />
-    <img src="pyutube/images/image3.png" />
-    <br />
-    <br />
-    <img src="pyutube/images/image4.png" />
 
 </div>
 
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-please follow the [contributing guidelines](https://github.com/Hetari/pyutube/blob/main/CONTRIBUTING.md)
+please follow the contributing guidelines.
 
 ## License
 
