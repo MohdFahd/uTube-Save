@@ -21,10 +21,10 @@ This project was inspired by [uTube Save](https://github.com/omer73364/uTube/) b
 
 ## TODO
 
-- [x] Publish on PyPI.
-- [x] Support downloading video (360p & 720p format).
-- [x] Supports all available video resolutions.
+- [x] Support GUI.
+- [x] Support downloading video (360p format).
 - [x] Support shorts.
+- [ ] Support all available formats.
 - [ ] Supports downloading playlists.
 - [ ] Playlists organized into folders by their names.
 - [ ] Add convert videos into mp3 format.
@@ -32,51 +32,35 @@ This project was inspired by [uTube Save](https://github.com/omer73364/uTube/) b
 
 ## Installation
 
-### Method 1: Using Pip
+## Clone the repository
 
 ```bash
-pip install pyutube
+https://github.com/MohdFahd/uTube-Save.git
 ```
 
-### Method 2: Building the project from source
-
-Clone the repository:
+### Client
 
 ```bash
-git clone https://github.com/Hetari/pyutube.git
+npm i || npm install
 ```
 
-Change to the directory:
+## Run commands
+
+```
+npm run dev
+```
+
+### Server
 
 ```bash
-cd pyutube
+npm i || npm install
 ```
 
-Install the requirements:
+## Run commands
 
-```bash
-pip install -r requirements.txt
 ```
-
-Build the package:
-
-```bash
-python setup.py sdist bdist_wheel
+node index
 ```
-
-Install the package via pip:
-
-```bash
-pip3 install dist/*
-```
-
-> **Warning:**
->
-> In some cases, the package will not install. You may have to add the flag `-H` into the pip command. and if this case, you can use `pip3 install -H dist/*` instead of `pip3 install dist/*`
->
-> and if this not working, and you are on `Linux` or `Mac`, try the command with `sudo`.
-
-Then you can use it in your `Terminal`.
 
 ## Usage
 
