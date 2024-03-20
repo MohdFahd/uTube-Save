@@ -2,6 +2,7 @@
 import homeView from "./partials/homeView.vue";
 import heroInfo from "./partials/heroInfo.vue";
 import Message from "../components/Message.vue";
+import loadingBar from "../components/loadingBar.vue";
 // import availableFormats from "../components/availableFormats.vue";
 
 import { ref, onMounted } from "vue";
@@ -12,6 +13,8 @@ const errorMessage = ref(""); // Variable to store error message
 const Formats = ref("");
 const progress = ref(0); // Variable
 const downloadUrl = ref(""); // Define downloadUrl outside initSSE
+
+const loading = ref(false); // Define loading
 function handleFormatSelected(selectedFormat) {
   formaVid.value = selectedFormat;
 }
@@ -19,7 +22,7 @@ const submitForm = () => {
   // Reset error message
   errorMessage.value = "";
   Formats.value = "";
-
+  loading.value = true;
   // Send request to server
   axios
     .post("http://localhost:3000/getData", {
@@ -31,6 +34,7 @@ const submitForm = () => {
       // console.log(response.data);
       errorMessage.value = response.data.message; // Display message from the server
       Formats.value = response.data.formats; // Display message from the server
+      loading.value = false;
     })
 
     .catch((error) => {
@@ -106,7 +110,10 @@ onMounted(() => {
           placeholder="Paste your video link here"
         />
         <button type="submit" submit="true" class="btn_dl d-none d-md-block">
-          <span>Download <i class="fa-solid fa-arrow-right"></i></span>
+          <span v-if="loading === false"> Download </span>
+          <span v-else>
+            <loadingBar />
+          </span>
           <span
             class="d-none spinner-border spinner-border-sm"
             aria-hidden="true"
@@ -156,6 +163,7 @@ onMounted(() => {
             />
             <div class="btn">
               <span class="span">{{ Format.qualityLabel }}</span>
+              <span class="span">{{ Format.contentLength }}</span>
             </div>
           </div>
         </div>
@@ -188,36 +196,3 @@ onMounted(() => {
   <!--  -->
   <heroInfo />
 </template>
-<script>
-export default {
-  data() {
-    return {
-      progress: 0,
-    };
-  },
-  mounted() {
-    // Fetch video
-    fetch("/download")
-      .then((response) => {
-        const total = Number(response.headers.get("Content-Length"));
-        let loaded = 0;
-
-        // Update progress as data is received
-        const reader = response.body.getReader();
-        const pump = () => {
-          reader.read().then(({ done, value }) => {
-            if (done) return;
-            loaded += value.byteLength;
-            this.progress = Math.min(100, (loaded / total) * 100);
-            pump();
-          });
-        };
-        pump();
-      })
-      .catch((error) => {
-        console.error("Error downloading video:", error.message);
-        // Handle error
-      });
-  },
-};
-</script>
