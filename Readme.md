@@ -81,7 +81,3 @@ Easy to download, just paste the url and enjoy
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 please follow the contributing guidelines.
-
-## License
-
-This project is licensed under the [MIT License](https://github.com/Hetari/pyutube/blob/main/LICENSE.md).
