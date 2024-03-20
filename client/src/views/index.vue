@@ -115,7 +115,12 @@ onMounted(() => {
           required
           placeholder="Paste your video link here"
         />
-        <button type="submit" submit="true" class="btn_dl d-none d-md-block">
+        <button
+          :disabled="loading"
+          type="submit"
+          submit="true"
+          class="btn_dl d-none d-md-block"
+        >
           <span v-if="loading === false"> Download </span>
           <span v-else>
             <loadingBar />
