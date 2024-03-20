@@ -17,6 +17,7 @@ const progress = ref(0); // Variable
 const downloadUrl = ref(""); // Define downloadUrl outside initSSE
 const vidInfo = ref(""); // Define vidInfo
 const loading = ref(false); // Define loading
+
 // Define a method to handle the emitted event
 const handleOptionSelected = (value) => {
   console.log(value);
@@ -28,6 +29,7 @@ const submitForm = () => {
   Formats.value = "";
   loading.value = true;
   vidInfo.value = "";
+
   // Send request to server
   axios
     .post("http://localhost:3000/getData", {
@@ -162,7 +164,7 @@ onMounted(() => {
 
     <div class="sup_plt border-top border-1 flex bg-danger" v-if="Formats">
       <div class="flex justify-content-center items-center mx-auto">
-        <img src="/assets/img/ps.png" width="150px" height="100px" alt="" />
+        <img :src="vidInfo.img" width="150px" height="100px" alt="" />
       </div>
       <div class="card-body text-end me-4">
         <h5 class="card-title">{{ vidInfo.title }}</h5>

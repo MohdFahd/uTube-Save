@@ -15,8 +15,9 @@ app.use(cors()); // Enable CORS for all routes
 
 var formats;
 var videoLink;
-let downloadProgress = 0;
+var selectedFormat;
 var title;
+let choiceFormat;
 app.get("/", (req, res) => {
   res.status(200).json({ data: "Hello Mohammed" });
 });
@@ -24,7 +25,7 @@ app.get("/", (req, res) => {
 app.post("/getData", async (req, res) => {
   const link = req.body.link;
   videoLink = req.body.link;
-  let choiceFormat = req.body.format;
+  choiceFormat = req.body.format;
   console.log("choice", choiceFormat);
   if (choiceFormat != "") {
     return res.redirect(
@@ -34,29 +35,40 @@ app.post("/getData", async (req, res) => {
 
   let isValidate = ytdl.validateURL(videoLink);
   if (isValidate) {
-    // Get the Video Id using getURLVideoID method
-    let videoID = ytdl.getURLVideoID(videoLink);
-    // Extract the formats from the video ID and send it as a response
-    const { player_response } = await ytdl.getInfo(videoID);
-    formats = player_response.streamingData["formats"];
-    // map the formats to only qualityLabel and quality
-    const formatDetails = formats.map((format) => {
-      return {
-        qualityLabel: format.qualityLabel,
-        contentLength: format.contentLength,
-      };
-    });
-    // Extract the vidInfo
-    title = player_response.videoDetails.title;
-    const lengthSeconds = player_response.videoDetails.lengthSeconds;
-    res.json({
-      formats: formatDetails,
-      videoDetails: {
-        title: title,
-        lengthSeconds: lengthSeconds,
-      },
-    });
-    console.log("formats");
+    try {
+      // Get the Video Id using getURLVideoID method
+      let videoID = ytdl.getURLVideoID(videoLink);
+      // Extract the formats from the video ID and send it as a response
+      const { player_response } = await ytdl.getInfo(videoID);
+      formats = player_response.streamingData["formats"];
+      // map the formats to only qualityLabel and quality
+      const formatDetails = formats
+        .filter((format) => format.qualityLabel === "360p")
+        .map((format) => {
+          return {
+            qualityLabel: format.qualityLabel,
+            contentLength: format.contentLength,
+          };
+        });
+
+      // Extract the vidInfo and send the data into the client
+      title = player_response.videoDetails.title;
+      const lengthSeconds = player_response.videoDetails.lengthSeconds;
+      res.json({
+        formats: formatDetails,
+        videoDetails: {
+          title: title,
+          lengthSeconds: lengthSeconds,
+          img: player_response.videoDetails.thumbnail.thumbnails[0].url,
+        },
+      });
+      console.log("formats");
+    } catch (error) {
+      console.error("Error occurred while fetching video details:", error);
+      res
+        .status(500)
+        .json({ message: "Error: Unable to fetch video details." });
+    }
   } else {
     res.json({ message: "Error: Invalid video URL" });
   }
@@ -72,8 +84,13 @@ const sendProgress = (progress) => {
 };
 
 app.get("/download", async (req, res) => {
-  const format = formats[0]; // Assuming you want to download the first format in the list
-  const videoStream = ytdl(videoLink, { format: format });
+  // Get the selected format from the request query parameters
+  selectedFormat = formats.find((format) => {
+    return format.qualityLabel === choiceFormat;
+  });
+  const format = selectedFormat; // Assuming you want to download the first format in the list
+
+  const videoStream = ytdl(videoLink, { format: selectedFormat });
 
   // Set response headers
   res.setHeader("Content-Type", "video/mp4");
